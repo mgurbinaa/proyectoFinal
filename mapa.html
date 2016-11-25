@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<link rel="stylesheet" type="text/css" href="public/css/estiloInicio.css">
+	<title>Inicio</title>
+</head>
+<body>
+	<div id="menu">
+		<ul>
+		</ul>
+        <button onclick="window.location.assign('busqueda.html')"><img src="public/img/redo.svg"></button>
+	</div>
+	<div id="boton-menu">
+		<button onclick="verMenu()"><img src="public/img/menu.svg"></button>
+	</div>
+	<div id="mapa">
+		
+	</div>
+	
+	<button id="boton" onclick="add()"><img src="public/img/add.svg"></button>
+	<div id="busqueda">
+		<input type="text" id="bus" placeholder="Nombre Lugar" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nombre Lugar'">
+		<img src="public/img/save.svg" onclick="save()">
+	</div>
+	<script>
+        window.addEventListener('load', localizar, true);
+                                
+        function localizar(){
+            //Obtener la geolocalización
+            navigator.geolocation.getCurrentPosition(ubicacion);
+        }
+        
+        function ubicacion(datos){
+            longitud = datos.coords.longitude;
+            latitud = datos.coords.latitude;
+            initMap()
+        }
+        
+        var map;
+        var marker;
+        var infowindow;
+
+        function initMap() {
+            var myLocation = {lat: latitud, lng: longitud};
+
+            map = new google.maps.Map(document.getElementById('mapa'), {
+                center: myLocation,
+                zoom: 17,
+                fullscreenControl: false,
+                streetViewControl: false,
+                mapTypeControl: false
+            });
+            actual = localStorage.getItem("actual");
+            menu = document.getElementById("menu");
+            lista = menu.getElementsByTagName('ul')[0];
+            if(localStorage.getItem("marcadores"+actual)){
+            	lugares = localStorage.getItem("marcadores"+actual);
+            	contador = lugares;
+            	for (var i = 0; i < lugares; i++) {
+            		createMarker(localStorage.getItem("lat"+actual+i),localStorage.getItem("lng"+actual+i),false);
+            		lista.innerHTML += '<li onclick="centrar('+actual+i+')"><img src="public/img/add.svg">'+localStorage.getItem("name"+actual+i)+'</li>';	
+            	}
+            }else{
+            	localStorage.setItem("marcadores"+actual,0);
+            	contador = 0;
+            }
+        }
+
+        function createMarker(lat,lng,drag) {
+            j = {lat: Number(lat), lng: Number(lng)};
+            marker = new google.maps.Marker({
+                map: map,
+                position: j,
+                draggable: drag
+        	});
+        }
+        function add(){
+        	boton = document.getElementById("boton");
+        	nombre = document.getElementById("busqueda");
+        	lng = map.getCenter().lng();
+            lat = map.getCenter().lat();
+        	createMarker(lat,lng,true);
+        	boton.style.display = "none";
+        	boton.style.visibility = "hidden";
+        	nombre.style.display = "block";
+        	nombre.style.visibility = "visible";
+        }
+        function save(){
+        	nom = document.getElementById("bus").value;
+        	if (nom != "") {
+        		seguro = confirm('Estas seguro de agregar este sitio?');
+        		if (seguro) {
+        			localStorage.setItem("name"+actual+contador,nom);
+        			localStorage.setItem("lng"+actual+contador,marker.getPosition().lng());
+                    localStorage.setItem("lat"+actual+contador,marker.getPosition().lat())
+                    contador++;
+        			localStorage.setItem("marcadores"+actual,contador);
+        			window.location.reload();
+        		}else{
+        			window.location.reload();
+        		}
+        	}
+        }
+        function centrar(position){
+            lng = localStorage.getItem("lng"+position);
+            lat = localStorage.getItem("lat"+position);
+            k ={lat:Number(lat),lng:Number(lng)};
+            map.setCenter(k);
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWxEHMYE5aUzzQ8hBy40Xjij1Tqx-AH5E&signed_in=true&libraries=places&callback=initMap" async defer>
+    </script>
+</body>
+<script type="text/javascript" src="public/js/mapa.js"> </script>
+</html>

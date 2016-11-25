@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<link rel="stylesheet" type="text/css" href="public/css/estilo.css">
+	<script type="text/javascript" src="public/js/busqueda.js"></script>
+	<title>Dondíhay?</title>
+</head>
+<body>
+	<div  id="content">
+		<div id="busqueda">
+			<input type="text" id="bus" placeholder="Dondíhay?" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Dondíhay?'">
+			<img src="public/img/search.svg" onclick="buscar()">
+		</div>
+		<div id="busquedas">
+			<div class="busqueda" onclic="cargarMapa()">
+				<img src="" alt="" class="imgBusqueda">
+				<h1 class="descripcion">Paleta payaso</h1>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
